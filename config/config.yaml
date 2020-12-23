@@ -1,0 +1,12 @@
+postgres:
+  database: chapi_db
+  user: chapi
+  password: 1q2w3e4r
+  host: localhost
+  port: 5432
+  minsize: 1
+  maxsize: 5
+
+database_uri: postgresql://chapi:1q2w3e4r@localhost:5432/chapi_db
+
+salt: api

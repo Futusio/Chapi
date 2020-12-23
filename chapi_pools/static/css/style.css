@@ -1,0 +1,381 @@
+.body {
+    height: 10rem;
+}
+
+.scroll {
+    margin-top: 3rem;
+    overflow: auto;
+    overflow-x: hidden;
+    height: 70vh;
+}
+
+.myHide {
+    opacity: 0;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #E68787;
+}
+
+.API {
+    font-family: SourceSansPro;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    border-collapse: collapse; 
+    width: 50rem;
+}
+
+tr {
+    border-bottom: 1px solid black;
+}
+
+th {
+    margin: 0 0 0 0;
+    padding: 0 50px 0 50px;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    transition: 1s linear;
+}
+
+.messages_date {
+    background-color: rgb(219, 238, 238, 0.75);
+    border-radius: 50px;
+    padding: 10px 15px 10px 15px;
+}
+
+.messages_date p {
+    padding: 0;
+    margin: 0;
+}
+
+
+.message {
+    margin: 1rem 0 1rem 0;
+    font-family: SourceSansPro;
+    width: 24rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 25px;
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+.message_to {
+    background-color: rgb(111, 189, 189, 0.75);
+    margin-left: 10rem;
+}
+
+.message_from {
+    background-color: rgb(111, 189, 189, 0.25);
+    margin-right: 10rem;
+}
+
+#name {
+    margin: 0;
+    color: #5C7C1C;
+    font-weight: bold;
+}
+
+#text {
+    margin: 10px 0 10px 0;
+}
+
+#edited {
+    margin: 0;
+    color: gray;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.message_input {
+    width: 24rem;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+    border: 2px solid #6FBDBD;
+    border-radius: 20px;
+    color: indianred;
+    display: flex;
+}
+
+#message_input_field {
+    font-family: SourceSansPro;
+    font-size: 16px;
+    width:80%;
+    padding: 1.5rem 0 1.5rem 0.5rem;
+    margin-left: 1rem;
+    border: 0;
+    outline:none;
+}
+
+
+#message_input_field:focus {
+    color: gray;
+    outline: 0;
+    outline-offset: 0;
+}
+
+#message_input_button {
+    margin-right: 1rem;
+    font-family: 'OswaldRegular';
+    text-decoration: none;
+    color: #365C5C;
+    font-weight: bold;
+    border-left: 2px solid #365C5C80;
+    /* padding: 1rem 1.5rem 1rem 1.5rem; */
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    margin: 0 0 0 0;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+#message_input_button:hover {
+    background-color: rgb(132, 189, 189, 0.25);
+}
+
+/* Below CSS to Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* BUTTONS */
+.buttons {
+    width: 15%;
+    display: flex;
+}
+
+
+
+.buttons > a {
+    font-family: RobotoRegular;
+    text-align: center;
+    width: 4rem;
+    background-color: white;
+    color: indianred;
+    border: 2px solid indianred;
+    text-decoration: none;
+    padding: 1em 0em 1em 0em;
+    height: 1.5em;
+    margin: 1em 0em 1em 1em;
+    border-radius: 50%;
+
+}
+
+.buttons > a:hover {
+    background-color: #cd5c5c;
+    border: 2px solid #9A5A5A; 
+    color: #ffffff;
+}
+
+
+
+/* LOGO WORKING */
+.logo {
+    background-color: white;
+    font-family: 'OswaldRegular';
+
+}
+
+.logo > p {
+    color: #cd5c5c;
+    font-size: 64px;
+    margin: 0 0 0 0;
+    border-bottom: 1px solid #851e1e80; 
+    border-radius: 10%;
+    padding-bottom: 5px;
+}
+
+/* SEARCH */
+.search {
+    /* margin-right: 2rem; */
+    margin: 1.75rem 2rem 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#results {
+    font-family: RobotoRegular;
+    color: indianred;
+    border-left: 2px solid #E68787;
+    border-right: 2px solid #E68787;
+    border-bottom: 2px solid #E68787;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    position: absolute;
+    width: 12.5rem;
+    margin-top: 2.5rem;
+    max-height: 150px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+#result {
+    padding-left: 30px;
+    width: 100%;
+}
+
+#result > a {
+    text-decoration: none;
+    color: indianred;
+    width: 100%;
+}
+
+#result > a:hover {
+    border-bottom: 2px solid #E68787;
+}
+
+
+
+.search-field{
+    width: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.search-field > input {
+    font-family: RobotoRegular;
+    font-size: 12pt;
+    border: 2px solid #E68787;
+    border-radius: 4px;
+    padding: 0.5rem;
+    color: indianred;
+}
+
+.search-field > input::placeholder {
+    color: indianred;
+}
+
+.search-field > input:focus {
+    outline: 0;
+    outline-offset: 0;
+    color: indianred;
+}
+
+
+a {
+    cursor: pointer;
+}
+#super {
+    display: flex;
+}
+
+/* The input field */
+#pop-input {
+    font-family: RobotoRegular;
+    padding: 0.5rem 0 0.5rem 0;
+    background-color: #E6A0A0;
+    border: 2px solid #A13C3C;
+    padding-left: 0.5rem;
+}
+
+#pop-input:focus {
+    outline: 0;
+    outline-offset: 0;
+}
+
+#user-token-input {
+    width: 80%;
+    font-family: RobotoRegular;
+    padding: 0.5rem 0 0.5rem 0;
+    background-color: #E6A0A0;
+    /* border: 2px solid #AA5050; */
+    border: 2px solid #A13C3C;
+    padding-left: 0.5rem;
+}
+
+#user-token-input:focus {
+    outline: 0;
+    outline-offset: 0;
+}
+/* The button to get API token */
+#get-api {
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    border-right: 2px solid #A13C3C; 
+    border-bottom: 2px solid #A13C3C;
+    border-top: 2px solid #A13C3C;
+    background-color: #E6A0A0;
+    text-decoration: none;
+    color:#251e1e;
+}
+
+/* Desing */
+
+.b-popup{
+    width:100%;
+    min-height:100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow:hidden;
+    position:fixed;
+    top:0px;
+}
+
+.b-popup .b-popup-content{
+    font-family: RobotoRegular;
+    width: 300px;
+    margin:100px 0px 0px 100px;
+    padding:10px;
+    background-color: #cd5c5c;
+    border-radius:5px;
+    box-shadow: 0px 0px 10px #000;
+}
+
+
+/* FOOTER */
+.footer {
+    margin-top: 1rem;
+    font-family: RobotoRegular;
+    font-size: smaller;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.footer > p {
+    margin: 0 0 0 0;
+}
+
+
+/*  */
+@font-face {
+    /* Oswald */
+    font-family: "OswaldRegular"; 
+    src: url("../fonts/Oswald-VariableFont_wght.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal; 
+} 
+
+@font-face {
+    font-family: "RobotoRegular"; 
+    src: url("../fonts/Roboto-Regular.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal; 
+}
+
+@font-face {
+    font-family: "SourceSansPro"; 
+    src: url("../fonts/SourceSansPro-Regular.ttf") format("truetype"); 
+    font-style: normal; 
+    font-weight: normal; 
+}

@@ -1,0 +1,441 @@
+{% extends 'init.html' %}
+
+{% block title %} Chapi {% endblock %}
+
+{% block body %} 
+<script>
+
+    var chatName = 'NaN'
+    function connection(token, chat){
+        $('#TakeMe').val('')
+        $('#results').fadeOut(500)
+        try {
+            socket.send('close')
+        } catch (error) {
+            console.log(error)
+        }
+        chatName = chat
+        socket = new WebSocket(`ws://localhost:8080/${token}/${chat}`);
+
+        socket.addEventListener('open', function (event) {
+            console.log("Connetcted to the WS Server");
+            $('.messages').html('')
+            $('.message_input').detach()
+            
+        });
+
+        socket.addEventListener('close', function (event) {
+            console.log("Disconnected from the WS Server");
+        });
+
+        socket.addEventListener('message', function (event) {
+            var data = JSON.parse(event.data)  // JSON Parsing 
+            console.log('I Get JSON: ', data)
+            user = 'Xymis'
+            
+            if(data['first']){
+                console.log("It's first message")
+                firstOpen(data)
+            } else {
+                if($('.blank').length){ // If blank exists
+                    $('.blank').remove()
+                }
+                console.log('Action is ',data['action'])
+                if(data['action'] == 'send'){
+                    $('.messages').append(`
+                        <div class="message last" id="msg_${data['id']}">
+                            <p id="name">${data['user']}</p>
+                            <p id='text'>${data['text']}</p>
+                            <p id='edited'></p>
+                        </div>
+                    `)
+                    if(data['token'] == $('#user-token-input').val()){
+                        $(".last").addClass('message_from');
+                    } else {
+                        $(".last").addClass('message_to');
+                    }
+                    $(".last").removeClass('last')
+                    var div = $(".scroll");
+                    div.scrollTop(div.prop('scrollHeight'));
+                } else if(data['action']=='update'){
+                    $(`#msg_${data['id']}`).children('#text').text(data['text'])
+                    $(`#msg_${data['id']}`).children('#edited').text('edited')
+                } else if(data['action'] == 'delete'){
+                    $(`#msg_${data['id']}`).detach()
+                } else {
+                    console.log("IDK WHAT TO DO")
+                }
+            }       
+        });
+
+    }
+
+
+    // The function throws out chat and shows hello-messages
+    $(document).on('focusout', '#user-token-input', function(e) {
+        try {
+            socket.send('close')
+        } catch (error) {
+            console.log('Socket is closed')
+        }
+        $('.messages').html(`
+        <div class="message message_from">
+                <p id="name">Chapi</p>
+                <p id='text'>Хе-хей, привет! И добро пожаловать на Chapi</p>
+        </div>
+    
+        <div class="message message_to">
+            <p id="name">Chapi</p>
+            <p id='text'>Chapi - это Chat API. Большиноство действий вынесены, такие как: Создания и удаление чата, приглашение в чат пользователей, удаление и изменение сообщений</p>
+        </div>
+    
+        <div class="message message_from">
+            <p id="name">Chapi</p>
+            <p id='text'>Получи свой личный API-токен и сохрани его. Введи его в соответствующее поле для просмотра чатов. Или воспользуйся API-документацией, чтобы использовать весь функционал. Это клёво</p>
+        </div>
+        `)
+        $('.message_input').detach()
+    })
+
+
+
+    function firstOpen(data){ // If the first message
+        if(data['status']){
+                $('.body').append(`
+                    <div class="message_input">
+                        <input id="message_input_field" placeholder="Enter a message"><a onclick="sendMsg()" id="message_input_button">></a>    
+                    </div>
+                `)
+        } else {
+            $('.message_input').detach()
+        }
+
+        if(Object.keys(data).length == 2){ // Если в чате нет сообщений 
+                $('.messages').append(`
+                <div class='messages_date blank'>
+                    <p id='date'>Just not messages yet</p>
+                </div>
+                `)
+        } else {
+            for(let message in data){
+                if(data[message]['user'] == undefined){
+                    continue
+                }
+                $('.messages').append(`
+                    <div class="message last" id="msg_${data[message]['id']}">
+                        <p id="name">${data[message]['user']}</p>
+                        <p id='text'>${data[message]['text']}</p>
+                        <p id='edited'></p>
+                    </div>
+                `)
+                if(data[message]['edited']){
+                    $(`#msg_${data[message]['id']}`).children('#edited').text('edited')
+                }
+                if(data[message]['own']){
+                    $(".last").addClass('message_from');
+                } else {
+                    $(".last").addClass('message_to');
+                }
+                $(".last").removeClass('last')
+                var div = $(".scroll");
+                div.scrollTop(div.prop('scrollHeight'));
+            }}
+    }
+
+
+    const sendMsg = () => {
+        if($('#message_input_field').val().length >= 3){
+            let message = JSON.stringify({
+                'action':'send',
+                'chat':chatName,
+                'message': $('#message_input_field').val(),
+                'token': $('#user-token-input').val(), 
+            })
+            socket.send(message);
+            $('#message_input_field').val('')
+        }else {
+            alert('Минимальная длина сообщения - 3 символа!')
+        }};
+ 
+    $(document).on('keyup', '#message_input_field', function(e) {
+        if(e.keyCode == 13){
+            sendMsg()
+        }
+    })
+
+    // PopUp sctipt
+    $(document).mouseup(function (e) {
+        var container = $("#popup1");
+        if (container.has(e.target).length === 0){
+            PopUpHide()
+        }
+    }); 
+
+        $(document).ready(function(){
+            PopUpHide();
+        });
+        function PopUpShow(){
+            $("#popup1").show();
+        }
+        function PopUpHide(){
+            $("#popup1").hide();
+        }
+    // End
+</script>
+
+<div class='header'>
+    <!-- Buttons -->
+    <div class='buttons'>
+            <a href="javascript:ChangeBody()" id="API">API</a>
+            <a href="javascript:PopUpShow()">Token</a>
+    </div>
+    <!-- Logo -->
+    <div class='logo'>
+        <p>Chapi</p>
+    </div>
+    <!-- Search -->
+    <div class='search'>
+        <div class='search-field'>
+            <input placeholder="Chat name", autocomplete="off" id='TakeMe'>
+        </div>
+        <div id='results' style="display: none;">  
+        </div>
+    </div>
+</div>
+
+<!-- PopUp window -->
+<div class="b-popup" id="popup1" style="display: none; left: 0px;">
+    <div class="b-popup-content">
+        <p>Please enter your name to get your own API Token</p>
+        <div id='super'>
+            <input id='pop-input' autocomplete="off">
+            <a id='get-api' onclick="getApi()">GET</a>
+        </div>
+        <p>Or Enter your API Token into field below</p>
+        <div id='super'>
+            <input id='user-token-input' autocomplete="off">
+        </div>
+    </div>
+</div>
+
+<!-- BODY -->
+<div class='body'>
+    <div class="scroll">
+
+        <div class="API" style="display: none;">
+            <b>.../api-&lt;API&gt;/chat</b>
+            <table>
+                <thead>
+                    <tr id='API_Head'>
+                        <th>Action</th>
+                        <th>JSON</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- CREATE BLOCK -->
+                    <tr>
+                        <th rowspan="3">Create</th>
+                        <td rowspan="3">{<br>action: create,<br>chat: example,</br>status: True,<br>}</td>
+                        <td>String(action)</td>
+                        <td>Create - флаг для создания чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Строка имени чата. Ограничение в 256 символов. Возможны проблемы при использовании спец.символов</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean(status)</td>
+                        <td>Булево значение определяющее открытость чата. В случае True - чат будет открыт для всех пользователей, в противном случае только приглашенные пользователи смогут его просматривать</td>
+                    </tr>
+                    <!-- DESTROY BLOCK -->
+                    <tr>
+                        <th rowspan="2">Destroy</th>
+                        <td rowspan="2">{<br>action: destroy,<br>chat: example,<br>}</td>
+                        <td>String(action)</td>
+                        <td>Destroy - флаг для создания чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Строка определяющая имя чата для удаления</td>
+                    </tr>
+                    <!-- UPDATE BLOCK -->
+                    <tr>
+                        <th rowspan="4">Update</th>
+                        <td rowspan="4">{<br>action: update,<br>chat: example<br>status:False,<br>name: other,<br>}</td>
+                        <td>String(action)</td>
+                        <td>Update - флаг для обновления чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Исходное имя чата, для которого необходимо применить обновления</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean(status)</td>
+                        <td>Позволяет изменить открытость чата. Так же можно сохранить исходное значение</td>
+                    </tr>
+                    <tr>
+                        <td>String(name)</td>
+                        <td>Новое имя чата, может совпадать с исходным</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Message Table -->
+            <br><br>
+            <b>.../api-&lt;API&gt;/message</b>
+            <table>
+                <thead>
+                    <tr id='API_Head'>
+                        <th>Action</th>
+                        <th>JSON</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SEND BLOCK -->
+                    <tr>
+                        <th rowspan="3">Send</th>
+                        <td rowspan="3">{<br>action: send,<br>chat: example,</br>message: text<br>}</td>
+                        <td>String(action)</td>
+                        <td>Send - флаг для отправки сообщения</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата в которое необходимо отправить сообщение</td>
+                    </tr>
+                    <tr>
+                        <td>String(text)</td>
+                        <td>Текст сообщение, длина которого должна составлять не более 256 символов</td>
+                    </tr>
+                    <!-- UPDATE BLOCK -->
+                    <tr>
+                        <th rowspan="4">Update</th>
+                        <td rowspan="4">{<br>action: update,<br>chat: example,</br>message: new_text<br>msg_id: id<br>}</td>
+                        <td>String(action)</td>
+                        <td>Update - флаг для изменения сообщения</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата в котором находится изменяемое сообщение</td>
+                    </tr>
+                    <tr>
+                        <td>String(message)</td>
+                        <td>Новый текст сообщения, накладываются те же ограничения, как и на отправку</td>
+                    </tr>
+                    <tr>
+                        <td>Integer(id)</td>
+                        <td>ID изменяемого сообщения (ID сообщения возвращает успешный запрос ../message send)</td>
+                    </tr>
+                    <!-- DELETE BLOCK -->
+                    <tr>
+                        <th rowspan="3">Delete</th>
+                        <td rowspan="3">{<br>action: delete,<br>chat: example,<br>msg_id: id<br>}</td>
+                        <td>String(action)</td>
+                        <td>Delete - флаг для удаления сообщения</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата, из которого необходимо удалить сообщение</td>
+                    </tr>
+                    <tr>
+                        <td>Integer(id)</td>
+                        <td>ID удаляемого сообщения</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><br><br>
+
+            <!-- User Table -->
+            <b>.../api-&lt;API&gt;/user</b>
+            <table>
+                <thead>
+                    <tr id='API_Head'>
+                        <th>Action</th>
+                        <th>JSON</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Invite BLOCK -->
+                    <tr>
+                        <th rowspan="4">Invite</th>
+                        <td rowspan="4">{<br>action: invite,<br>chat: example</br>user: name<br>permit: True<br>}</td>
+                        <td>String(action)</td>
+                        <td>Invite - флаг для добавления пользователя в чат </td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата, в который необходимо пригласить пользователя. Приглашать может только создатель чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(user)</td>
+                        <td>Имя приглашаемого в чат пользователя</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean(permit)</td>
+                        <td>Разрешение писать в чат. Приглашенный пользователь может просматривать чат. Передача этого флага с значением True позволит ему так же писать в чат</td>
+                    </tr>
+                    <!-- Kick BLOCK -->
+                    <tr>
+                        <th rowspan="3">Kick</th>
+                        <td rowspan="3">{<br>action: kick,<br>chat: example,<br>user: name<br>}</td>
+                        <td>String(action)</td>
+                        <td>kick - флаг для исключения пользователя из чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата, из которого необходимо исключить пользователя. Приглашать может только создатель чата</td>
+                    </tr>
+                    <tr>
+                        <td>String(user)</td>
+                        <td>Имя исключаемого из чата пользователя</td>
+                    </tr>
+                    <!-- UPDATE BLOCK -->
+                    <tr>
+                        <th rowspan="4">Permission</th>
+                        <td rowspan="4">{<br>action: permit,<br>chat: example<br>user: name,<br>status:true<br>}</td>
+                        <td>String(action)</td>
+                        <td>Permit - флаг для изменений прав пользователя</td>
+                    </tr>
+                    <tr>
+                        <td>String(chat)</td>
+                        <td>Название чата, в котором необходимо изменить права пользователя</td>
+                    </tr>
+                    <tr>
+                        <td>String(user)</td>
+                        <td>Имя пользователя для изменения его прав</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean(permit)</td>
+                        <td>Флаг определяющий возможность пользователя писать в чат. Значение True позволяет пользователю писать в чат, False - запрещает</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        
+        <div class="messages">
+
+            <div class="message message_from">
+                <p id="name">Chapi</p>
+                <p id='text'>Хе-хей, привет! И добро пожаловать на Chapi</p>
+            </div>
+        
+            <div class="message message_to">
+                <p id="name">Chapi</p>
+                <p id='text'>Chapi - это Chat API. Большиноство действий вынесены, такие как: Создания и удаление чата, приглашение в чат пользователей, удаление и изменение сообщений</p>
+            </div>
+        
+            <div class="message message_from">
+                <p id="name">Chapi</p>
+                <p id='text'>Получи свой личный API-токен и сохрани его. Введи его в соответствующее поле для просмотра чатов. Или воспользуйся API-документацией, чтобы использовать весь функционал. Это клёво</p>
+            </div>
+        
+        </div>
+    </div>
+</div>
+{% endblock %}

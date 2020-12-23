@@ -1,0 +1,31 @@
+<!-- The file includes all links and three-parts scripts and sets markup-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script 
+        src="https://code.jquery.com/jquery-3.5.1.js" 
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="{{ url('static', filename='js/jquery.powertip.js') }}"></script>
+    <script type="text/javascript" src="{{ url('static', filename='js/main.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url('static', filename='css/jquery.powertip.css') }}" />
+    <link rel="stylesheet" type=text/css href="{{ url('static', filename='css/style.css') }}" />
+    <title>{% block title %}{% endblock %}</title>
+
+</head>
+<body>
+    {% block header %}
+    {% endblock %}
+
+    {% block body %}
+    {% endblock %}
+
+    {% block footer %}
+    {% endblock %}
+</body>
+</html>
